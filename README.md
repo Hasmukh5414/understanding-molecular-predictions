@@ -1,6 +1,6 @@
 # Understanding Molecular Predictions
 
-An interactive Streamlit dashboard for exploring measured water solubility, molecular properties, and supplied ESOL estimates across 1,128 records.
+An interactive Streamlit dashboard for exploring water solubility and comparing saved AttentiveFP predictions with the supplied ESOL estimates.
 
 ## Run locally
 
@@ -15,15 +15,22 @@ python -m streamlit run app.py
 
 Open the local URL printed by Streamlit.
 
-## Explore the data
+## Explore model performance
 
-- **Molecular-weight range** updates the summary metrics, all three charts, and the compound list. Hover over a histogram bar for its solubility range, count, and share of the selected records.
-- **Property in scatter plot** lets you compare measured solubility with any of the six molecular descriptors.
-- **ESOL estimate comparison** switches between measured versus estimated values and signed error versus measured solubility. Signed error is the supplied estimate minus the measurement. A positive value indicates an overestimate.
-- **Compound details** shows measurements, estimate error, descriptors, SMILES, and a 2D structure drawn locally by RDKit. Click a point in either scatter plot or search by compound name to highlight that record across all three charts.
+- **Data split** opens on the 114 held-out test records. Switch to the validation set (112), training set (902), or all records for exploration. The split is experimental.
+- **Prediction source** switches the active model between AttentiveFP and the supplied ESOL estimates. MAE and RMSE are calculated on the same filtered records for both sources.
+- **Molecular properties** plots measured solubility or absolute error against any of the six molecular descriptors. **Prediction agreement** switches between predicted versus measured solubility and signed error versus measured solubility.
+- **Compound details** shows the measurement, predictions, errors, and structure. Click a scatter point, search by name, or use **Smallest error** and **Largest error** to highlight a record across all three charts.
 
 ## Data and attribution
 
 [`delaney-processed.csv`](delaney-processed.csv) matches the [Delaney ESOL dataset distributed by DeepChem](https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/delaney-processed.csv). All 1,128 rows are retained. Solubility is expressed as log₁₀ of concentration in mol/L. The estimate column contains the ESOL values supplied with the CSV.
+
+In the course workspace, the app reads `predictions.csv` and `test_predictions.csv`
+from the saved AttentiveFP run (128 hidden channels, seed 43). A standalone copy
+can load the same predictions from `gnn-predictions.csv` if provided. Predictions
+are matched to the original ESOL CSV by its one-based record ID and checked
+against the compound name and measured value. With only the ESOL CSV available,
+the dashboard opens in ESOL exploration mode.
 
 Original reference: John S. Delaney (2004), *ESOL: Estimating Aqueous Solubility Directly from Molecular Structure*. [Journal article](https://pubs.acs.org/doi/10.1021/ci034243x)
